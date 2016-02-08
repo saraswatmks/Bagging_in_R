@@ -1,0 +1,12 @@
+#function for bagging in R - useful for non-categorical predictions
+
+bagging<-function(training,testing,length_divisor=4,iterations=1000)  
+{  
+predictions<-foreach(m=1:iterations,.combine=cbind) %do% {  
+training_positions <- sample(nrow(training), size=floor((nrow(training)/length_divisor)))  
+train_pos<-1:nrow(training) %in% training_positions  
+lm_fit<-lm(y~x1+x2+x3,data=training[train_pos,])  
+predict(lm_fit,newdata=testing)  
+}  
+rowMeans(predictions)  
+}  
